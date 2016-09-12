@@ -54,7 +54,11 @@ public class AnClass implements Comparable<AnClass> {
 		this.place = place;
 	}
 
-	// ////////
+	// MINE
+
+	public int getTime() {
+		return (week - 1) * 5 + index;
+	}
 
 	public void setTime(String time) {
 		String[] times = time.split("-");

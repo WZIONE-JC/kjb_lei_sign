@@ -3,6 +3,10 @@ package database;
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.Statement;
+import java.util.ArrayList;
+
+import utils.ClassTool;
+import model.AnClass;
 
 public class DbUser {
 	private Connection con = null;
@@ -11,6 +15,7 @@ public class DbUser {
 		con = DbMain.getConnect();
 	}
 
+	/** 学生登录 */
 	public String stuLogin(String name, String pass, boolean need_class) {
 		Statement stmt = null;
 		ResultSet res = null;
@@ -28,9 +33,8 @@ public class DbUser {
 				} else {
 					result = "1";
 				}
-			} else {
-				/////////////////////未注册处理//////////////////////
-				result = "-1";
+			} else {// 未注册处理
+				result = stuRegister(stmt, name, pass);
 			}
 			stmt.close();
 			res.close();
@@ -41,6 +45,7 @@ public class DbUser {
 		return result;
 	}
 
+	/** 教师登录 */
 	public String teaLogin(String name, String pass, boolean need_class) {
 		Statement stmt = null;
 		ResultSet res = null;
@@ -70,6 +75,7 @@ public class DbUser {
 		return result;
 	}
 
+	/** 教师注册 */
 	public String teaRegister(String name, String pass, String real) {
 		Statement stmt = null;
 		ResultSet res = null;
@@ -99,6 +105,43 @@ public class DbUser {
 		} catch (Exception e) {
 			System.out.println("注册异常");
 			return "-2";
+		}
+	}
+
+	/**
+	 * 学生注册，1成功，-1失败。
+	 */
+	private String stuRegister(Statement stmt, String name, String pass) {
+		try {
+			// 模拟登陆，获取课表
+			String class_raw = ClassTool.getRawClassTable(name, pass);
+			if (class_raw == null || "".equals(class_raw))
+				return "-1";
+			ArrayList<AnClass> list = ClassTool.getClassTable(class_raw);
+			String real = ClassTool.getRealName(name, class_raw);
+			if (list == null || list.size() == 0)
+				return "-1";
+			// 写入注册信息到数据库
+			String sql = "insert into user_s values('" + name + "','" + pass
+					+ "','" + real + "','" + ClassTool.getClassJson(list)
+					+ "')";
+			stmt.executeUpdate(sql);
+			// 写入课程信息到数据库
+			for (int i = 0; i < list.size(); i++) {
+				AnClass cls = list.get(i);
+				sql = "insert into info_c values('" + name + "','','"
+						+ cls.getName() + "','" + cls.getTime() + "','"
+						+ cls.getPlace() + "','" + cls.getId() + "')";
+				stmt.executeUpdate(sql);
+			}
+			// 补充教师信息到课程信息中/*我真是太机智了*/
+			sql = "update info_c set teacher="
+					+ "(select teacher from final_class "
+					+ "where class_id=id)where student=" + name;
+			stmt.executeUpdate(sql);
+			return "1";
+		} catch (Exception e) {
+			return "-1";
 		}
 	}
 

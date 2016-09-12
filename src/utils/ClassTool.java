@@ -18,7 +18,7 @@ import org.jsoup.select.Elements;
 
 import com.google.gson.Gson;
 
-/** 课程表获取与解析工具类 */
+/** 课程表获取与解析 */
 public class ClassTool {
 
 	/**
@@ -36,16 +36,24 @@ public class ClassTool {
 	}
 
 	/**
+	 * 获取用户真实姓名
+	 */
+	public static String getRealName(String user_name, String raw_text) {
+		int pos = raw_text.indexOf(user_name);
+		try {
+			String result = raw_text.substring(pos - 20, pos - 1);// 最多允许20个字的名字
+			result = result.substring(result.lastIndexOf(" ") + 1);
+			return result;
+		} catch (Exception e) {
+			return "";
+		}
+	}
+
+	/**
 	 * 解析课表信息，封装为列表
 	 */
-	public static ArrayList<AnClass> getClassTable(String user_name,
-			String user_pass) {
-		Document doc = null;
-		try {
-			doc = Jsoup.parse(getRawClassTable(user_name, user_pass));
-		} catch (Exception e1) {
-			return null;
-		}
+	public static ArrayList<AnClass> getClassTable(String raw_text) {
+		Document doc = Jsoup.parse(raw_text);
 		Elements e = doc.body().select("table table tbody");
 		boolean first_tag = true;
 		ArrayList<AnClass> list = new ArrayList<AnClass>();
@@ -97,7 +105,7 @@ public class ClassTool {
 	/**
 	 * 通过爬网的形式获取课程表信息
 	 */
-	private static String getRawClassTable(String name, String pass)
+	public static String getRawClassTable(String name, String pass)
 			throws Exception {
 		// 用户登录
 		String url = "http://jwxt.sdu.edu.cn:7890/pls/wwwbks/bks_login2.login?jym2005=12006.557322974271";
@@ -129,6 +137,17 @@ public class ClassTool {
 		get.releaseConnection();
 		// System.out.println("获取课表成功");
 		return result;
+	}
+
+	public static void main(String args[]) {
+		System.out.println("A");
+		try {// /////////////确认一下密码错误返回什么，尽量让没有异常，错误返回null
+				// 提交时请注意保护个人信息
+			System.out.println(getRawClassTable("201400301104", "000000"));
+		} catch (Exception e) {
+			System.out.println("ERROR");
+		}
+		System.out.println("B");
 	}
 
 }
