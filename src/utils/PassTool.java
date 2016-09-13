@@ -2,6 +2,7 @@ package utils;
 
 import java.security.MessageDigest;
 
+/** 密码简单单向加密类 */
 public class PassTool {
 
 	/**

@@ -11,7 +11,8 @@ import javax.servlet.http.HttpServletResponse;
 import database.DbUser;
 
 /**
- * Login仅用于验证与跳转，不引入Session机制
+ * 登录与注册监听类<br/>
+ * Login仅用于验证与跳转，不引入Session/Token机制
  */
 @WebServlet(urlPatterns = { "/UserAction" })
 public class UserAction extends HttpServlet {

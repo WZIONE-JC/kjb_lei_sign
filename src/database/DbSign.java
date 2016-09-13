@@ -4,11 +4,12 @@ import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.Statement;
 
+/** 签到与查看，数据库处理 */
 public class DbSign {
 	private Connection con = null;
 
 	public DbSign() {
-		con = DbMain.getConnect();
+		con = DbMain.getInatance().getConnect();
 	}
 
 	/**

@@ -10,6 +10,7 @@ import javax.servlet.http.HttpServletResponse;
 
 import database.DbSign;
 
+/** 签到与查看监听类 */
 @WebServlet("/SignAction")
 public class SignAction extends HttpServlet {
 	private static final long serialVersionUID = 1L;

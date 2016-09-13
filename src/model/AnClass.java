@@ -1,5 +1,6 @@
 package model;
 
+/** 一节课的信息 */
 public class AnClass implements Comparable<AnClass> {
 	private int week = 0;// 周次
 	private int index = 0;// 节次

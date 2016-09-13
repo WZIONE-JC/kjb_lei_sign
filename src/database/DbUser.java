@@ -9,11 +9,12 @@ import utils.ClassTool;
 import utils.PassTool;
 import model.AnClass;
 
+/** 用户相关操作，数据库处理 */
 public class DbUser {
 	private Connection con = null;
 
 	public DbUser() {
-		con = DbMain.getConnect();
+		con = DbMain.getInatance().getConnect();
 	}
 
 	/** 学生登录（str/1-succ,-1用户名密码不对,-2登录失败，服务器错误） */
