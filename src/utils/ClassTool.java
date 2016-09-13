@@ -42,6 +42,7 @@ public class ClassTool {
 	public static String getRealName(String user_name, String raw_text) {
 		int pos = raw_text.indexOf(user_name);
 		try {
+			// 解析原文： <span class="td1">学院 专业 姓名(学号)</span>
 			String result = raw_text.substring(pos - 20, pos - 1);// 最多允许20个字的名字
 			result = result.substring(result.lastIndexOf(" ") + 1);
 			return result;

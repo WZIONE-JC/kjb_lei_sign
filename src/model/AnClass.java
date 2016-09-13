@@ -1,12 +1,15 @@
 package model;
 
 public class AnClass implements Comparable<AnClass> {
-	private int week = 0;
-	private int index = 0;
-	private String name = "";
-	private String place = "";
-	private String id = "";// kch_kxh
-	private String teacher = "";
+	private int week = 0;// 周次
+	private int index = 0;// 节次
+	private String name = "";// 课名
+	private String place = "";// 地点
+	private String teacher = "";// 教师
+	private String id = "";// ID
+
+	// id=kch_kxh
+	// 隐含time=(week - 1) * 5 + index
 
 	public AnClass(String id, String name, String place, String time) {
 		this.setId(id);

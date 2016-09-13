@@ -56,7 +56,8 @@ CREATE TABLE `info_c` (
   `teacher` varchar(255) DEFAULT NULL,
   `class` varchar(255) DEFAULT NULL,
   `time` int(11) DEFAULT NULL COMMENT '0-34/1-35',
-  `place` varchar(255) DEFAULT NULL
+  `place` varchar(255) DEFAULT NULL,
+  `class_id` varchar(255) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 /*Data for the table `info_c` */
@@ -66,6 +67,7 @@ CREATE TABLE `info_c` (
 DROP TABLE IF EXISTS `state_s`;
 
 CREATE TABLE `state_s` (
+  `stu_id` varchar(255) DEFAULT NULL,
   `student` varchar(255) DEFAULT NULL,
   `teacher` varchar(255) DEFAULT NULL,
   `time` int(11) DEFAULT NULL
@@ -80,8 +82,7 @@ DROP TABLE IF EXISTS `user_s`;
 CREATE TABLE `user_s` (
   `name` varchar(255) DEFAULT NULL,
   `pass` varchar(255) DEFAULT NULL,
-  `real` varchar(255) DEFAULT NULL,
-  `table` text
+  `real` varchar(255) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 /*Data for the table `user_s` */
