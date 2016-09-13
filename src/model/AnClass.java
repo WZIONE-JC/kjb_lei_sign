@@ -6,6 +6,7 @@ public class AnClass implements Comparable<AnClass> {
 	private String name = "";
 	private String place = "";
 	private String id = "";// kch_kxh
+	private String teacher = "";
 
 	public AnClass(String id, String name, String place, String time) {
 		this.setId(id);
@@ -52,6 +53,14 @@ public class AnClass implements Comparable<AnClass> {
 
 	public void setPlace(String place) {
 		this.place = place;
+	}
+
+	public String getTeacher() {
+		return teacher;
+	}
+
+	public void setTeacher(String teacher) {
+		this.teacher = teacher;
 	}
 
 	// MINE

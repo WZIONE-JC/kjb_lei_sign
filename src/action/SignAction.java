@@ -8,16 +8,21 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import database.DbSign;
+
 @WebServlet("/SignAction")
 public class SignAction extends HttpServlet {
 	private static final long serialVersionUID = 1L;
+	private DbSign dbSign = null;
 
 	public SignAction() {
 		super();
+		dbSign = new DbSign();
 	}
 
 	protected void doGet(HttpServletRequest request,
 			HttpServletResponse response) throws ServletException, IOException {
+		response.getWriter().write("SIGN_ACTION");
 	}
 
 	protected void doPost(HttpServletRequest request,
@@ -36,15 +41,19 @@ public class SignAction extends HttpServlet {
 	 * 学生签到
 	 */
 	private String stuSign(HttpServletRequest request) {
-
-		return null;
+		String stuid = request.getParameter("stuid");
+		String stu = request.getParameter("stu");
+		String tea = request.getParameter("tea");
+		String time = request.getParameter("time");
+		return dbSign.stuSign(stuid, stu, tea, time);
 	}
 
 	/**
 	 * 教师查看
 	 */
 	private String teaWatch(HttpServletRequest request) {
-
-		return null;
+		String tea = request.getParameter("tea");
+		String time = request.getParameter("time");
+		return dbSign.teaSeeSign(tea, time);
 	}
 }

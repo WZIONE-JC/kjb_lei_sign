@@ -15,7 +15,7 @@ public class DbUser {
 		con = DbMain.getConnect();
 	}
 
-	/** 学生登录 */
+	/** 学生登录（str/1-succ,-1用户名密码不对,-2登录失败，服务器错误） */
 	public String stuLogin(String name, String pass, boolean need_class) {
 		Statement stmt = null;
 		ResultSet res = null;
@@ -28,8 +28,30 @@ public class DbUser {
 			res = stmt.executeQuery(sql);
 			if (res.next()) { // 登录成功
 				if (need_class) {
-					// ////////////////考虑是否返回课程表///////////////注意stmt是否冲突
-					result = "1";
+					// 返回课程表
+					sql = "select real,table from user_s where name='" + name
+							+ "'";
+					res = stmt.executeQuery(sql);
+					if (res.next()) {// 查到了// 返回课程表
+						String real = res.getString("real");
+						sql = "select class,time,place,teacher from info_c where student='"
+								+ name + "'";
+						res = stmt.executeQuery(sql);
+						ArrayList<AnClass> list = new ArrayList<AnClass>();
+						while (res.next()) {
+							String cls_name = res.getString("class");
+							String time = res.getString("time");
+							String place = res.getString("place");
+							String teacher = res.getString("teacher");
+							AnClass cls = new AnClass("", cls_name, place, time);
+							cls.setTeacher(teacher);
+							list.add(cls);
+						}
+						result = "{\"name\":\"" + real + "\",\"table\":"
+								+ ClassTool.getClassJson(list) + "}";
+					} else {
+						result = "1";
+					}
 				} else {
 					result = "1";
 				}
@@ -45,7 +67,7 @@ public class DbUser {
 		return result;
 	}
 
-	/** 教师登录 */
+	/** 教师登录（str/1-succ,-1用户名密码不对,-2登录失败，服务器错误） */
 	public String teaLogin(String name, String pass, boolean need_class) {
 		Statement stmt = null;
 		ResultSet res = null;
@@ -57,9 +79,21 @@ public class DbUser {
 					+ pass + "'";
 			res = stmt.executeQuery(sql);
 			if (res.next()) { // 登录成功
-				if (need_class) {
-					// ////////////////考虑是否返回课程表///////////////注意stmt是否冲突
-					result = "1";
+				if (need_class) {// 返回课程表
+					String real = res.getString("real");
+					sql = "select class,time,place from info_c where teacher='"
+							+ real + "'";
+					res = stmt.executeQuery(sql);
+					ArrayList<AnClass> list = new ArrayList<AnClass>();
+					while (res.next()) {
+						String cls_name = res.getString("class");
+						String time = res.getString("time");
+						String place = res.getString("place");
+						AnClass cls = new AnClass("", cls_name, place, time);
+						list.add(cls);
+					}
+					result = "{\"name\":\"" + real + "\",\"table\":"
+							+ ClassTool.getClassJson(list) + "}";
 				} else {
 					result = "1";
 				}
@@ -75,7 +109,7 @@ public class DbUser {
 		return result;
 	}
 
-	/** 教师注册 */
+	/** 教师注册（str/1-succ,-1已经注册,-2注册失败，服务器错误） */
 	public String teaRegister(String name, String pass, String real) {
 		Statement stmt = null;
 		ResultSet res = null;
@@ -115,7 +149,7 @@ public class DbUser {
 		try {
 			// 模拟登陆，获取课表
 			String class_raw = ClassTool.getRawClassTable(name, pass);
-			if (class_raw == null || "".equals(class_raw))
+			if (class_raw == null || "".equals(class_raw))// 登录失败
 				return "-1";
 			ArrayList<AnClass> list = ClassTool.getClassTable(class_raw);
 			String real = ClassTool.getRealName(name, class_raw);
@@ -123,8 +157,7 @@ public class DbUser {
 				return "-1";
 			// 写入注册信息到数据库
 			String sql = "insert into user_s values('" + name + "','" + pass
-					+ "','" + real + "','" + ClassTool.getClassJson(list)
-					+ "')";
+					+ "','" + real + "')";
 			stmt.executeUpdate(sql);
 			// 写入课程信息到数据库
 			for (int i = 0; i < list.size(); i++) {
@@ -141,7 +174,7 @@ public class DbUser {
 			stmt.executeUpdate(sql);
 			return "1";
 		} catch (Exception e) {
-			return "-1";
+			return "-2";
 		}
 	}
 

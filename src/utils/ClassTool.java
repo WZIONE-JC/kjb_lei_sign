@@ -6,6 +6,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 
 import model.AnClass;
+import org.apache.commons.httpclient.Header;
 
 import org.apache.commons.httpclient.HttpClient;
 import org.apache.commons.httpclient.NameValuePair;
@@ -103,10 +104,9 @@ public class ClassTool {
 	}
 
 	/**
-	 * 通过爬网的形式获取课程表信息
+	 * 通过爬网的形式获取课程表信息，登录失败返回null
 	 */
-	public static String getRawClassTable(String name, String pass)
-			throws Exception {
+	public static String getRawClassTable(String name, String pass) {
 		// 用户登录
 		String url = "http://jwxt.sdu.edu.cn:7890/pls/wwwbks/bks_login2.login?jym2005=12006.557322974271";
 		HttpClient client = new HttpClient();
@@ -114,39 +114,46 @@ public class ClassTool {
 		NameValuePair username = new NameValuePair("stuid", name);
 		NameValuePair password = new NameValuePair("pwd", pass);
 		post.setRequestBody(new NameValuePair[] { username, password });// 添加表单
-		client.executeMethod(post);
+		try {
+			client.executeMethod(post);
+		} catch (Exception e) {
+			return null;
+		}
 		// 获取其课表
 		String newurl = "http://jwxt.sdu.edu.cn:7890/pls/wwwbks/xk.CourseView";
-		String cookie = post.getResponseHeader("Set-Cookie").getValue();// 获取cookie
+		Header header = post.getResponseHeader("Set-Cookie");
+		if (header == null)// 登录失败
+			return null;
+		String cookie = header.getValue();// 获取cookie
 		GetMethod get = new GetMethod(newurl);// 用get请求新的网址
 		if (get.getRequestHeader("Set-Cookie") == null) {// 若需要cookie，则添加
 			get.setRequestHeader("Set-Cookie", cookie);
 		}
-		client.executeMethod(get);
-		// 读取URL的响应
-		BufferedReader in = new BufferedReader(new InputStreamReader(
-				get.getResponseBodyAsStream()));
-		StringBuffer sb = new StringBuffer("");
-		String line = "";
-		while ((line = in.readLine()) != null) {
-			sb.append(line + "\n");
+		try {
+			client.executeMethod(get);
+			// 读取URL的响应
+			BufferedReader in = new BufferedReader(new InputStreamReader(
+					get.getResponseBodyAsStream()));
+			StringBuffer sb = new StringBuffer("");
+			String line = "";
+			while ((line = in.readLine()) != null) {
+				sb.append(line + "\n");
+			}
+			in.close();
+			String result = sb.toString();
+			post.releaseConnection();
+			get.releaseConnection();
+			// System.out.println("获取课表成功");
+			return result;
+		} catch (Exception e) {
+			return null;
 		}
-		in.close();
-		String result = sb.toString();
-		post.releaseConnection();
-		get.releaseConnection();
-		// System.out.println("获取课表成功");
-		return result;
 	}
 
-	public static void main(String args[]) {
+	public static void main(String args[]) throws Exception {
 		System.out.println("A");
-		try {// /////////////确认一下密码错误返回什么，尽量让没有异常，错误返回null
-				// 提交时请注意保护个人信息
-			System.out.println(getRawClassTable("201400301104", "000000"));
-		} catch (Exception e) {
-			System.out.println("ERROR");
-		}
+		// 提交时请注意保护个人信息
+		System.out.println("" + getRawClassTable("201400301104", "000000"));
 		System.out.println("B");
 	}
 

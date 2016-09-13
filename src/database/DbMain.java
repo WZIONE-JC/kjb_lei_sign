@@ -3,6 +3,8 @@ package database;
 import java.sql.Connection;
 import java.sql.DriverManager;
 
+/////////////////////记得要更新sql数据库备份文件
+
 public class DbMain {
 	private static final String driver = "com.mysql.jdbc.Driver"; // 驱动
 	private static final String url = "jdbc:mysql://localhost:3306/kjb_sign";
