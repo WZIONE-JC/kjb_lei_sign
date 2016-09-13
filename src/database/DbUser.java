@@ -6,6 +6,7 @@ import java.sql.Statement;
 import java.util.ArrayList;
 
 import utils.ClassTool;
+import utils.PassTool;
 import model.AnClass;
 
 public class DbUser {
@@ -17,46 +18,42 @@ public class DbUser {
 
 	/** 学生登录（str/1-succ,-1用户名密码不对,-2登录失败，服务器错误） */
 	public String stuLogin(String name, String pass, boolean need_class) {
+		pass = PassTool.getMD5(pass);
 		Statement stmt = null;
 		ResultSet res = null;
 		String sql = "";
 		String result = "";
 		try {
 			stmt = con.createStatement();
-			sql = "select * from user_t where name='" + name + "' and pass='"
-					+ pass + "'";
+			sql = "select pass from user_t where name='" + name + "'";
 			res = stmt.executeQuery(sql);
-			if (res.next()) { // 登录成功
-				if (need_class) {
-					// 返回课程表
-					sql = "select real,table from user_s where name='" + name
-							+ "'";
-					res = stmt.executeQuery(sql);
-					if (res.next()) {// 查到了// 返回课程表
-						String real = res.getString("real");
-						sql = "select class,time,place,teacher from info_c where student='"
-								+ name + "'";
-						res = stmt.executeQuery(sql);
-						ArrayList<AnClass> list = new ArrayList<AnClass>();
-						while (res.next()) {
-							String cls_name = res.getString("class");
-							String time = res.getString("time");
-							String place = res.getString("place");
-							String teacher = res.getString("teacher");
-							AnClass cls = new AnClass("", cls_name, place, time);
-							cls.setTeacher(teacher);
-							list.add(cls);
-						}
-						result = "{\"name\":\"" + real + "\",\"table\":"
-								+ ClassTool.getClassJson(list) + "}";
-					} else {
-						result = "1";
-					}
-				} else {
-					result = "1";
+			/* 这里做代码简化，为方便理解，部分资源不进行释放 */
+			if (!res.next())// 用户不存在，注册用户并返回
+				return stuRegister(stmt, name, pass);
+			if (!pass.equals(res.getString("pass"))) // 密码不对
+				return "-1";
+			if (!need_class) // 不需要返回课程表
+				return "1";
+			// 检索课表并返回
+			sql = "select real,table from user_s where name='" + name + "'";
+			res = stmt.executeQuery(sql);
+			if (res.next()) {// 查到课表，则返回课程表
+				String real = res.getString("real");
+				sql = "select class,time,place,teacher from info_c where student='"
+						+ name + "'";
+				res = stmt.executeQuery(sql);
+				ArrayList<AnClass> list = new ArrayList<AnClass>();
+				while (res.next()) {
+					String cls_name = res.getString("class");
+					String time = res.getString("time");
+					String place = res.getString("place");
+					String teacher = res.getString("teacher");
+					AnClass cls = new AnClass("", cls_name, place, time);
+					cls.setTeacher(teacher);
+					list.add(cls);
 				}
-			} else {// 未注册处理
-				result = stuRegister(stmt, name, pass);
+				result = "{\"name\":\"" + real + "\",\"table\":"
+						+ ClassTool.getClassJson(list) + "}";
 			}
 			stmt.close();
 			res.close();
@@ -69,6 +66,7 @@ public class DbUser {
 
 	/** 教师登录（str/1-succ,-1用户名密码不对,-2登录失败，服务器错误） */
 	public String teaLogin(String name, String pass, boolean need_class) {
+		pass = PassTool.getMD5(pass);
 		Statement stmt = null;
 		ResultSet res = null;
 		String sql = "";
@@ -111,6 +109,7 @@ public class DbUser {
 
 	/** 教师注册（str/1-succ,-1已经注册,-2注册失败，服务器错误） */
 	public String teaRegister(String name, String pass, String real) {
+		pass = PassTool.getMD5(pass);
 		Statement stmt = null;
 		ResultSet res = null;
 		String sql = "";
@@ -172,6 +171,8 @@ public class DbUser {
 					+ "(select teacher from final_class "
 					+ "where class_id=id)where student=" + name;
 			stmt.executeUpdate(sql);
+			// 此处可以关闭数据流了
+			stmt.close();
 			return "1";
 		} catch (Exception e) {
 			return "-2";
