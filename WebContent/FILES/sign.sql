@@ -82,7 +82,7 @@ DROP TABLE IF EXISTS `user_s`;
 CREATE TABLE `user_s` (
   `name` varchar(255) DEFAULT NULL,
   `pass` varchar(255) DEFAULT NULL,
-  `real` varchar(255) DEFAULT NULL
+  `real_name` varchar(255) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 /*Data for the table `user_s` */
@@ -94,7 +94,7 @@ DROP TABLE IF EXISTS `user_t`;
 CREATE TABLE `user_t` (
   `name` varchar(255) DEFAULT NULL,
   `pass` varchar(255) DEFAULT NULL,
-  `real` varchar(255) DEFAULT NULL
+  `real_name` varchar(255) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 /*Data for the table `user_t` */

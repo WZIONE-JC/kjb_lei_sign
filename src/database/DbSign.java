@@ -25,6 +25,10 @@ public class DbSign {
 		Statement stmt = null;
 		ResultSet res = null;
 		String sql = "";
+		// //////////////////////////需要判断位置坐标////////////////
+		////////////////////////////添加一个参place，便于处理位置信息
+		// ///////此处使用矩形判断，作差，手动调研各个区位xy
+		// ////////////////需要根据time判断签到时间是否合适（此处在APP端限制）
 		try {// 是否已经签到
 			stmt = con.createStatement();
 			sql = "select * from state_s where stu_id='" + stu_id
@@ -39,7 +43,6 @@ public class DbSign {
 			return "-2";
 		}
 		try {// 签到
-				// ////////////////需要根据time判断签到时间是否合适（此处在APP端限制）
 			sql = "insert into state_s values('" + stu_id + "','" + stu + "','"
 					+ tea + "'," + time + ")";
 			int num = stmt.executeUpdate(sql);

@@ -54,10 +54,10 @@ public class UserAction extends HttpServlet {
 			int year = Integer.parseInt(name.substring(0, 4));
 			if (year < 1000 || year > 2016) {// 取巧的核验算法
 				if (year < 9000)// 开放9开头数据，便于测试
-					return "-2";
+					return "-3";
 			}
 		} catch (Exception e) {
-			return "-2";
+			return "-3";
 		}
 		// 判断是否已经注册，并进行注册
 		return dbUser.teaRegister(name, pass, real);

@@ -36,10 +36,10 @@ public class DbUser {
 			if (!need_class) // 不需要返回课程表
 				return "1";
 			// 检索课表并返回
-			sql = "select real,table from user_s where name='" + name + "'";
+			sql = "select real_name,table from user_s where name='" + name + "'";
 			res = stmt.executeQuery(sql);
 			if (res.next()) {// 查到课表，则返回课程表
-				String real = res.getString("real");
+				String real = res.getString("real_name");
 				sql = "select class,time,place,teacher from info_c where student='"
 						+ name + "'";
 				res = stmt.executeQuery(sql);
@@ -79,7 +79,7 @@ public class DbUser {
 			res = stmt.executeQuery(sql);
 			if (res.next()) { // 登录成功
 				if (need_class) {// 返回课程表
-					String real = res.getString("real");
+					String real = res.getString("real_name");
 					sql = "select class,time,place from info_c where teacher='"
 							+ real + "'";
 					res = stmt.executeQuery(sql);
@@ -108,7 +108,7 @@ public class DbUser {
 		return result;
 	}
 
-	/** 教师注册（str/1-succ,-1已经注册,-2注册失败，服务器错误） */
+	/** 教师注册（str/1-succ,-1已经注册,-2注册失败，服务器错误，-3匹配失败） */
 	public String teaRegister(String name, String pass, String real) {
 		pass = PassTool.getMD5(pass);
 		Statement stmt = null;
@@ -116,7 +116,7 @@ public class DbUser {
 		String sql = "";
 		try {// 是否账号重复
 			stmt = con.createStatement();
-			sql = "select * from user_t where name='" + name + "' or real='"
+			sql = "select * from user_t where name='" + name + "' or real_name='"
 					+ real + "'";
 			res = stmt.executeQuery(sql);
 			if (res.next()) {
