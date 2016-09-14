@@ -29,6 +29,8 @@ public class SignAction extends HttpServlet {
 	protected void doPost(HttpServletRequest request,
 			HttpServletResponse response) throws ServletException, IOException {
 		String type = request.getParameter("REQUEST_TYPE");
+		response.addHeader("Content-Type",
+				"application/x-www-form-urlencoded; charset=utf-8");// Ö¸¶¨±àÂë
 		String state = "-2";
 		if ("SIGN".equals(type)) {
 			state = stuSign(request);

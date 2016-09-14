@@ -19,6 +19,15 @@ public class AnClass implements Comparable<AnClass> {
 		this.setTime(time);
 	}
 
+	public AnClass(String id, String name, String place, int time,
+			String teacher) {
+		this.setId(id);
+		this.setName(name);
+		this.setPlace(place);
+		this.setTime(time);
+		this.setTeacher(teacher);
+	}
+
 	public int getIndex() {
 		return index;
 	}
@@ -73,10 +82,15 @@ public class AnClass implements Comparable<AnClass> {
 		return (week - 1) * 5 + index;
 	}
 
-	public void setTime(String time) {
+	public void setTime(String time) {// 给原生课表使用
 		String[] times = time.split("-");
 		this.week = Integer.parseInt(times[0]);
 		this.index = Integer.parseInt(times[1]);
+	}
+
+	public void setTime(int time) {// 给数据库数据使用
+		this.week = time / 5 + 1;
+		this.index = time % 5;
 	}
 
 	@Override

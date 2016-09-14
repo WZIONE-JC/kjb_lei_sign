@@ -6,8 +6,8 @@ import java.util.ArrayList;
 import java.util.Collections;
 
 import model.AnClass;
-import org.apache.commons.httpclient.Header;
 
+import org.apache.commons.httpclient.Header;
 import org.apache.commons.httpclient.HttpClient;
 import org.apache.commons.httpclient.NameValuePair;
 import org.apache.commons.httpclient.methods.GetMethod;
@@ -152,10 +152,10 @@ public class ClassTool {
 	}
 
 	public static void main(String args[]) throws Exception {
-		System.out.println("A");
-		// 提交时请注意保护个人信息
-		System.out.println("" + getRawClassTable("201400301104", "000000"));
-		System.out.println("B");
+		// System.out.println("A");
+		// // 提交时请注意保护个人信息
+		// System.out.println("" + getRawClassTable("201400301104", "000000"));
+		// System.out.println("B");
 	}
 
 }

@@ -33,6 +33,8 @@ public class UserAction extends HttpServlet {
 	protected void doPost(HttpServletRequest request,
 			HttpServletResponse response) throws ServletException, IOException {
 		String type = request.getParameter("REQUEST_TYPE");
+		response.addHeader("Content-Type",
+				"application/x-www-form-urlencoded; charset=utf-8");//指定编码
 		String state = "-2";
 		if ("LOGIN".equals(type)) {
 			state = login(request);
@@ -71,11 +73,11 @@ public class UserAction extends HttpServlet {
 		String name = request.getParameter("name");
 		String pass = request.getParameter("pass");
 		String type = request.getParameter("type");
-		String auto = request.getParameter("auto");
+		String auto = request.getParameter("auto");// auto不需要课表
 		if ("1".equals(type)) {// 教师
-			return dbUser.teaLogin(name, pass, "1".equals(auto));
+			return dbUser.teaLogin(name, pass, "0".equals(auto));
 		} else if ("0".equals(type)) {// 学生
-			return dbUser.stuLogin(name, pass, "1".equals(auto));
+			return dbUser.stuLogin(name, pass, "0".equals(auto));
 		}
 		return "-1";
 	}

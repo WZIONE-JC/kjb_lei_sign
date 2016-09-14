@@ -19,6 +19,7 @@ public class DbUser {
 
 	/** 学生登录（str/1-succ,-1用户名密码不对,-2登录失败，服务器错误） */
 	public String stuLogin(String name, String pass, boolean need_class) {
+		String raw_pass = pass;
 		pass = PassTool.getMD5(pass);
 		Statement stmt = null;
 		ResultSet res = null;
@@ -26,17 +27,17 @@ public class DbUser {
 		String result = "";
 		try {
 			stmt = con.createStatement();
-			sql = "select pass from user_t where name='" + name + "'";
+			sql = "select pass from user_s where name='" + name + "'";
 			res = stmt.executeQuery(sql);
 			/* 这里做代码简化，为方便理解，部分资源不进行释放 */
 			if (!res.next())// 用户不存在，注册用户并返回
-				return stuRegister(stmt, name, pass);
+				return stuRegister(stmt, name, raw_pass);// 这里必须使用原生密码
 			if (!pass.equals(res.getString("pass"))) // 密码不对
 				return "-1";
 			if (!need_class) // 不需要返回课程表
 				return "1";
 			// 检索课表并返回
-			sql = "select real_name,table from user_s where name='" + name + "'";
+			sql = "select real_name from user_s where name='" + name + "'";
 			res = stmt.executeQuery(sql);
 			if (res.next()) {// 查到课表，则返回课程表
 				String real = res.getString("real_name");
@@ -46,15 +47,18 @@ public class DbUser {
 				ArrayList<AnClass> list = new ArrayList<AnClass>();
 				while (res.next()) {
 					String cls_name = res.getString("class");
-					String time = res.getString("time");
+					int time = res.getInt("time");
 					String place = res.getString("place");
 					String teacher = res.getString("teacher");
-					AnClass cls = new AnClass("", cls_name, place, time);
-					cls.setTeacher(teacher);
+					if (teacher == null)
+						teacher = "";// 此列可能为空
+					AnClass cls = new AnClass("", cls_name, place, time,
+							teacher);
 					list.add(cls);
 				}
 				result = "{\"name\":\"" + real + "\",\"table\":"
 						+ ClassTool.getClassJson(list) + "}";
+				System.out.println(result);// ///////////////////////////////////////////////
 			}
 			stmt.close();
 			res.close();
@@ -86,9 +90,9 @@ public class DbUser {
 					ArrayList<AnClass> list = new ArrayList<AnClass>();
 					while (res.next()) {
 						String cls_name = res.getString("class");
-						String time = res.getString("time");
+						int time = res.getInt("time");
 						String place = res.getString("place");
-						AnClass cls = new AnClass("", cls_name, place, time);
+						AnClass cls = new AnClass("", cls_name, place, time, "");
 						list.add(cls);
 					}
 					result = "{\"name\":\"" + real + "\",\"table\":"
@@ -116,8 +120,8 @@ public class DbUser {
 		String sql = "";
 		try {// 是否账号重复
 			stmt = con.createStatement();
-			sql = "select * from user_t where name='" + name + "' or real_name='"
-					+ real + "'";
+			sql = "select * from user_t where name='" + name
+					+ "' or real_name='" + real + "'";
 			res = stmt.executeQuery(sql);
 			if (res.next()) {
 				stmt.close();
@@ -148,6 +152,7 @@ public class DbUser {
 	private String stuRegister(Statement stmt, String name, String pass) {
 		try {
 			// 模拟登陆，获取课表
+			System.out.println(name + "--" + pass);
 			String class_raw = ClassTool.getRawClassTable(name, pass);
 			if (class_raw == null || "".equals(class_raw))// 登录失败
 				return "-1";
@@ -156,8 +161,8 @@ public class DbUser {
 			if (list == null || list.size() == 0)
 				return "-1";
 			// 写入注册信息到数据库
-			String sql = "insert into user_s values('" + name + "','" + pass
-					+ "','" + real + "')";
+			String sql = "insert into user_s values('" + name + "','"
+					+ PassTool.getMD5(pass) + "','" + real + "')";
 			stmt.executeUpdate(sql);
 			// 写入课程信息到数据库
 			for (int i = 0; i < list.size(); i++) {
