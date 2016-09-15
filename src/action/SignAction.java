@@ -36,6 +36,8 @@ public class SignAction extends HttpServlet {
 			state = stuSign(request);
 		} else if ("WATCH".equals(type)) {
 			state = teaWatch(request) + "";
+		} else if ("POSITION".equals(type)) {
+			state = dbSign.getPositionInfo();
 		}
 		response.getWriter().write(state);
 	}
@@ -47,8 +49,9 @@ public class SignAction extends HttpServlet {
 		String stuid = request.getParameter("stuid");
 		String stu = request.getParameter("stu");
 		String tea = request.getParameter("tea");
+		String tea2 = request.getParameter("tea2");
 		String time = request.getParameter("time");
-		return dbSign.stuSign(stuid, stu, tea, time);
+		return dbSign.stuSign(stuid, stu, tea, tea2, time);
 	}
 
 	/**

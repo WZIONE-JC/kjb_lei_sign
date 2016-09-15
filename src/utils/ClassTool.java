@@ -154,7 +154,7 @@ public class ClassTool {
 	public static void main(String args[]) throws Exception {
 		// System.out.println("A");
 		// // 提交时请注意保护个人信息
-		// System.out.println("" + getRawClassTable("201400301104", "000000"));
+		// System.out.println("" + getRawClassTable("", ""));
 		// System.out.println("B");
 	}
 

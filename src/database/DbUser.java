@@ -58,7 +58,6 @@ public class DbUser {
 				}
 				result = "{\"name\":\"" + real + "\",\"table\":"
 						+ ClassTool.getClassJson(list) + "}";
-				System.out.println(result);// ///////////////////////////////////////////////
 			}
 			stmt.close();
 			res.close();
