@@ -9,7 +9,7 @@ import utils.ClassTool;
 import utils.PassTool;
 import model.AnClass;
 
-/** ÓÃ»§Ïà¹Ø²Ù×÷£¬Êı¾İ¿â´¦Àí */
+/** ç”¨æˆ·ç›¸å…³æ“ä½œï¼Œæ•°æ®åº“å¤„ç† */
 public class DbUser {
 	private Connection con = null;
 
@@ -17,7 +17,7 @@ public class DbUser {
 		con = DbMain.getInatance().getConnect();
 	}
 
-	/** Ñ§ÉúµÇÂ¼£¨str/1-succ,-1ÓÃ»§ÃûÃÜÂë²»¶Ô,-2µÇÂ¼Ê§°Ü£¬·şÎñÆ÷´íÎó£© */
+	/** å­¦ç”Ÿç™»å½•ï¼ˆstr/1-succ,-1ç”¨æˆ·åå¯†ç ä¸å¯¹,-2ç™»å½•å¤±è´¥ï¼ŒæœåŠ¡å™¨é”™è¯¯ï¼‰ */
 	public String stuLogin(String name, String pass, boolean need_class) {
 		String raw_pass = pass;
 		pass = PassTool.getMD5(pass);
@@ -29,17 +29,21 @@ public class DbUser {
 			stmt = con.createStatement();
 			sql = "select pass from user_s where name='" + name + "'";
 			res = stmt.executeQuery(sql);
-			/* ÕâÀï×ö´úÂë¼ò»¯£¬Îª·½±ãÀí½â£¬²¿·Ö×ÊÔ´²»½øĞĞÊÍ·Å */
-			if (!res.next())// ÓÃ»§²»´æÔÚ£¬×¢²áÓÃ»§²¢·µ»Ø
-				return stuRegister(stmt, name, raw_pass);// ÕâÀï±ØĞëÊ¹ÓÃÔ­ÉúÃÜÂë
-			if (!pass.equals(res.getString("pass"))) // ÃÜÂë²»¶Ô
-				return "-1";
-			if (!need_class) // ²»ĞèÒª·µ»Ø¿Î³Ì±í
-				return "1";
-			// ¼ìË÷¿Î±í²¢·µ»Ø
+			/* è¿™é‡Œåšä»£ç ç®€åŒ–ï¼Œä¸ºæ–¹ä¾¿ç†è§£ï¼Œéƒ¨åˆ†èµ„æºä¸è¿›è¡Œé‡Šæ”¾ */
+			if (!res.next()) {// ç”¨æˆ·ä¸å­˜åœ¨ï¼Œæ³¨å†Œç”¨æˆ·å¹¶è¿”å›
+				int state = stuRegister(stmt, name, raw_pass);// è¿™é‡Œå¿…é¡»ä½¿ç”¨åŸç”Ÿå¯†ç 
+				if (state < 0)
+					return state + "";
+			} else {
+				if (!pass.equals(res.getString("pass"))) // å¯†ç ä¸å¯¹
+					return "-1";
+				if (!need_class) // ä¸éœ€è¦è¿”å›è¯¾ç¨‹è¡¨
+					return "1";
+			}
+			// æ£€ç´¢è¯¾è¡¨å¹¶è¿”å›
 			sql = "select real_name from user_s where name='" + name + "'";
 			res = stmt.executeQuery(sql);
-			if (res.next()) {// ²éµ½¿Î±í£¬Ôò·µ»Ø¿Î³Ì±í
+			if (res.next()) {// æŸ¥åˆ°è¯¾è¡¨ï¼Œåˆ™è¿”å›è¯¾ç¨‹è¡¨
 				String real = res.getString("real_name");
 				sql = "select class,time,place,teacher from info_c where student='"
 						+ name + "'";
@@ -51,7 +55,7 @@ public class DbUser {
 					String place = res.getString("place");
 					String teacher = res.getString("teacher");
 					if (teacher == null)
-						teacher = "";// ´ËÁĞ¿ÉÄÜÎª¿Õ
+						teacher = "";// æ­¤åˆ—å¯èƒ½ä¸ºç©º
 					AnClass cls = new AnClass("", cls_name, place, time,
 							teacher);
 					list.add(cls);
@@ -62,13 +66,13 @@ public class DbUser {
 			stmt.close();
 			res.close();
 		} catch (Exception ex) {
-			System.out.println("µÇÂ¼Òì³£");
+			System.out.println("ç™»å½•å¼‚å¸¸");
 			result = "-2";
 		}
 		return result;
 	}
 
-	/** ½ÌÊ¦µÇÂ¼£¨str/1-succ,-1ÓÃ»§ÃûÃÜÂë²»¶Ô,-2µÇÂ¼Ê§°Ü£¬·şÎñÆ÷´íÎó£© */
+	/** æ•™å¸ˆç™»å½•ï¼ˆstr/1-succ,-1ç”¨æˆ·åå¯†ç ä¸å¯¹,-2ç™»å½•å¤±è´¥ï¼ŒæœåŠ¡å™¨é”™è¯¯ï¼‰ */
 	public String teaLogin(String name, String pass, boolean need_class) {
 		pass = PassTool.getMD5(pass);
 		Statement stmt = null;
@@ -80,8 +84,8 @@ public class DbUser {
 			sql = "select * from user_t where name='" + name + "' and pass='"
 					+ pass + "'";
 			res = stmt.executeQuery(sql);
-			if (res.next()) { // µÇÂ¼³É¹¦
-				if (need_class) {// ·µ»Ø¿Î³Ì±í
+			if (res.next()) { // ç™»å½•æˆåŠŸ
+				if (need_class) {// è¿”å›è¯¾ç¨‹è¡¨
 					String real = res.getString("real_name");
 					sql = "select class,time,place from info_c where teacher='"
 							+ real + "'";
@@ -105,19 +109,19 @@ public class DbUser {
 			stmt.close();
 			res.close();
 		} catch (Exception ex) {
-			System.out.println("µÇÂ¼Òì³£");
+			System.out.println("ç™»å½•å¼‚å¸¸");
 			result = "-2";
 		}
 		return result;
 	}
 
-	/** ½ÌÊ¦×¢²á£¨str/1-succ,-1ÒÑ¾­×¢²á,-2×¢²áÊ§°Ü£¬·şÎñÆ÷´íÎó£¬-3Æ¥ÅäÊ§°Ü£© */
+	/** æ•™å¸ˆæ³¨å†Œï¼ˆstr/1-succ,-1å·²ç»æ³¨å†Œ,-2æ³¨å†Œå¤±è´¥ï¼ŒæœåŠ¡å™¨é”™è¯¯ï¼Œ-3åŒ¹é…å¤±è´¥ï¼‰ */
 	public String teaRegister(String name, String pass, String real) {
 		pass = PassTool.getMD5(pass);
 		Statement stmt = null;
 		ResultSet res = null;
 		String sql = "";
-		try {// ÊÇ·ñÕËºÅÖØ¸´
+		try {// æ˜¯å¦è´¦å·é‡å¤
 			stmt = con.createStatement();
 			sql = "select * from user_t where name='" + name
 					+ "' or real_name='" + real + "'";
@@ -127,43 +131,39 @@ public class DbUser {
 				res.close();
 				return "-1";
 			}
-		} catch (Exception ex) {// ¶¼±¨´íÁË£¬¾Í²»±ØcloseÁË
+		} catch (Exception ex) {// éƒ½æŠ¥é”™äº†ï¼Œå°±ä¸å¿…closeäº†
 			return "-2";
 		}
-		try {// ×¢²á
+		try {// æ³¨å†Œ
 			sql = "insert into user_t values('" + name + "','" + pass + "','"
 					+ real + "')";
 			int num = stmt.executeUpdate(sql);
 			stmt.close();
 			res.close();
-			if (num != 0) // ĞŞ¸Ä³É¹¦
+			if (num != 0) // ä¿®æ”¹æˆåŠŸ
 				return "1";
 			return "-2";
 		} catch (Exception e) {
-			System.out.println("×¢²áÒì³£");
+			System.out.println("æ³¨å†Œå¼‚å¸¸");
 			return "-2";
 		}
 	}
 
 	/**
-	 * Ñ§Éú×¢²á£¬1³É¹¦£¬-1Ê§°Ü¡£
+	 * å­¦ç”Ÿæ³¨å†Œï¼Œ1æˆåŠŸï¼Œ-1å¤±è´¥ã€‚
 	 */
-	private String stuRegister(Statement stmt, String name, String pass) {
+	private int stuRegister(Statement stmt, String name, String pass) {
 		try {
-			// Ä£ÄâµÇÂ½£¬»ñÈ¡¿Î±í
-			System.out.println(name + "--" + pass);
-			String class_raw = ClassTool.getRawClassTable(name, pass);
-			if (class_raw == null || "".equals(class_raw))// µÇÂ¼Ê§°Ü
-				return "-1";
-			ArrayList<AnClass> list = ClassTool.getClassTable(class_raw);
-			String real = ClassTool.getRealName(name, class_raw);
-			if (list == null || list.size() == 0)
-				return "-1";
-			// Ğ´Èë×¢²áĞÅÏ¢µ½Êı¾İ¿â
+			// æ¨¡æ‹Ÿç™»é™†ï¼Œè·å–è¯¾è¡¨
+			ArrayList<AnClass> list = ClassTool.getClassTable(name, pass);
+			String real = ClassTool.getRealName();
+			if (list == null || list.size() == 0)// ç™»å½•å¤±è´¥
+				return -1;
+			// å†™å…¥æ³¨å†Œä¿¡æ¯åˆ°æ•°æ®åº“
 			String sql = "insert into user_s values('" + name + "','"
 					+ PassTool.getMD5(pass) + "','" + real + "')";
 			stmt.executeUpdate(sql);
-			// Ğ´Èë¿Î³ÌĞÅÏ¢µ½Êı¾İ¿â
+			// å†™å…¥è¯¾ç¨‹ä¿¡æ¯åˆ°æ•°æ®åº“
 			for (int i = 0; i < list.size(); i++) {
 				AnClass cls = list.get(i);
 				sql = "insert into info_c values('" + name + "','','"
@@ -171,16 +171,14 @@ public class DbUser {
 						+ cls.getPlace() + "','" + cls.getId() + "')";
 				stmt.executeUpdate(sql);
 			}
-			// ²¹³ä½ÌÊ¦ĞÅÏ¢µ½¿Î³ÌĞÅÏ¢ÖĞ/*ÎÒÕæÊÇÌ«»úÖÇÁË*/
+			// è¡¥å……æ•™å¸ˆä¿¡æ¯åˆ°è¯¾ç¨‹ä¿¡æ¯ä¸­/*æˆ‘çœŸæ˜¯å¤ªæœºæ™ºäº†*/
 			sql = "update info_c set teacher="
 					+ "(select teacher from final_class "
 					+ "where class_id=id)where student=" + name;
 			stmt.executeUpdate(sql);
-			// ´Ë´¦¿ÉÒÔ¹Ø±ÕÊı¾İÁ÷ÁË
-			stmt.close();
-			return "1";
+			return 1;
 		} catch (Exception e) {
-			return "-2";
+			return -2;
 		}
 	}
 

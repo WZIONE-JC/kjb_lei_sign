@@ -1,7 +1,9 @@
 package utils;
 
-import java.io.BufferedReader;
-import java.io.InputStreamReader;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.Collections;
 
@@ -19,11 +21,13 @@ import org.jsoup.select.Elements;
 
 import com.google.gson.Gson;
 
-/** ¿Î³Ì±í»ñÈ¡Óë½âÎö */
+/** è¯¾ç¨‹è¡¨è·å–ä¸è§£æ */
 public class ClassTool {
+	private static final String file_name = "/root/temp/class_table.tmp";
+	private static String real_name = "";
 
 	/**
-	 * ·â×°ÎªJSONÊı¾İ
+	 * å°è£…ä¸ºJSONæ•°æ®
 	 */
 	public static String getClassJson(ArrayList<AnClass> list) {
 		String result = "[";
@@ -37,13 +41,20 @@ public class ClassTool {
 	}
 
 	/**
-	 * »ñÈ¡ÓÃ»§ÕæÊµĞÕÃû
+	 * è·å–ç”¨æˆ·çœŸå®å§“å
 	 */
-	public static String getRealName(String user_name, String raw_text) {
+	public static String getRealName() {
+		return real_name;
+	}
+
+	/**
+	 * è·å–ç”¨æˆ·çœŸå®å§“å
+	 */
+	private static String getRealName(String user_name, String raw_text) {
 		int pos = raw_text.indexOf(user_name);
 		try {
-			// ½âÎöÔ­ÎÄ£º <span class="td1">Ñ§Ôº ×¨Òµ ĞÕÃû(Ñ§ºÅ)</span>
-			String result = raw_text.substring(pos - 20, pos - 1);// ×î¶àÔÊĞí20¸ö×ÖµÄÃû×Ö
+			// è§£æåŸæ–‡ï¼š <span class="td1">å­¦é™¢ ä¸“ä¸š å§“å(å­¦å·)</span>
+			String result = raw_text.substring(pos - 20, pos - 1);// æœ€å¤šå…è®¸20ä¸ªå­—çš„åå­—
 			result = result.substring(result.lastIndexOf(" ") + 1);
 			return result;
 		} catch (Exception e) {
@@ -52,13 +63,22 @@ public class ClassTool {
 	}
 
 	/**
-	 * ½âÎö¿Î±íĞÅÏ¢£¬·â×°ÎªÁĞ±í
+	 * è§£æè¯¾è¡¨ä¿¡æ¯ï¼Œå°è£…ä¸ºåˆ—è¡¨
 	 */
-	public static ArrayList<AnClass> getClassTable(String raw_text) {
-		Document doc = Jsoup.parse(raw_text);
+	public static ArrayList<AnClass> getClassTable(String user_name,
+			String user_pass) {
+		ArrayList<AnClass> list = new ArrayList<AnClass>();
+		if (!getRawClassTable(user_name, user_pass))// è·å–åŸç”Ÿè¯¾ç¨‹ä¿¡æ¯
+			return list;
+		Document doc = null;
+		try {
+			doc = Jsoup.parse(new File(file_name), "GB2312");
+		} catch (Exception e) {
+			return list;
+		}
+		real_name = getRealName(user_name, doc.body().html());
 		Elements e = doc.body().select("table table tbody");
 		boolean first_tag = true;
-		ArrayList<AnClass> list = new ArrayList<AnClass>();
 		for (Element ee : e.get(3).getElementsByTag("tr")) {
 			if (first_tag) {
 				first_tag = false;
@@ -84,9 +104,9 @@ public class ClassTool {
 					break;
 				case 7:
 					place = eee.text().substring(0, eee.text().length() - 1);
-					// place = place.replace("Èí¼şÔ°", "");
+					// place = place.replace("è½¯ä»¶å›­", "");
 					place = place.replace("d", "");
-					place = place.replace("Çø", "-");
+					place = place.replace("åŒº", "-");
 					break;
 				case 8:
 					time = eee.text().substring(0, eee.text().length() - 1);
@@ -95,9 +115,9 @@ public class ClassTool {
 			}
 			list.add(new AnClass(id, name, place, time));
 		}
-		// ÅÅĞò
-		Collections.sort(list);// Éæ¼°Ò»¸öºÏ²¢ÎÊÌâ£¬Ôİ²»´¦Àí
-		// // ²âÊÔÏÔÊ¾
+		// æ’åº
+		Collections.sort(list);// æ¶‰åŠä¸€ä¸ªåˆå¹¶é—®é¢˜ï¼Œæš‚ä¸å¤„ç†
+		// // æµ‹è¯•æ˜¾ç¤º
 		// for (AnClass a : list) {
 		// System.out.println(a);
 		// }
@@ -105,55 +125,54 @@ public class ClassTool {
 	}
 
 	/**
-	 * Í¨¹ıÅÀÍøµÄĞÎÊ½»ñÈ¡¿Î³Ì±íĞÅÏ¢£¬µÇÂ¼Ê§°Ü·µ»Ønull
+	 * é€šè¿‡çˆ¬ç½‘çš„å½¢å¼è·å–è¯¾ç¨‹è¡¨ä¿¡æ¯ï¼Œç™»å½•å¤±è´¥è¿”å›null
 	 */
-	public static String getRawClassTable(String name, String pass) {
-		// ÓÃ»§µÇÂ¼
+	private static boolean getRawClassTable(String name, String pass) {
+		// ç”¨æˆ·ç™»å½•
 		String url = "http://jwxt.sdu.edu.cn:7890/pls/wwwbks/bks_login2.login?jym2005=12006.557322974271";
 		HttpClient client = new HttpClient();
 		PostMethod post = new PostMethod(url);
 		NameValuePair username = new NameValuePair("stuid", name);
 		NameValuePair password = new NameValuePair("pwd", pass);
-		post.setRequestBody(new NameValuePair[] { username, password });// Ìí¼Ó±íµ¥
+		post.setRequestBody(new NameValuePair[] { username, password });// æ·»åŠ è¡¨å•
 		try {
 			client.executeMethod(post);
 		} catch (Exception e) {
-			return null;
+			return false;
 		}
-		// »ñÈ¡Æä¿Î±í
+		// è·å–å…¶è¯¾è¡¨
 		String newurl = "http://jwxt.sdu.edu.cn:7890/pls/wwwbks/xk.CourseView";
 		Header header = post.getResponseHeader("Set-Cookie");
-		if (header == null)// µÇÂ¼Ê§°Ü
-			return null;
-		String cookie = header.getValue();// »ñÈ¡cookie
-		GetMethod get = new GetMethod(newurl);// ÓÃgetÇëÇóĞÂµÄÍøÖ·
-		if (get.getRequestHeader("Set-Cookie") == null) {// ÈôĞèÒªcookie£¬ÔòÌí¼Ó
+		if (header == null)// ç™»å½•å¤±è´¥
+			return false;
+		String cookie = header.getValue();// è·å–cookie
+		GetMethod get = new GetMethod(newurl);// ç”¨getè¯·æ±‚æ–°çš„ç½‘å€
+		if (get.getRequestHeader("Set-Cookie") == null) {// è‹¥éœ€è¦cookieï¼Œåˆ™æ·»åŠ 
 			get.setRequestHeader("Set-Cookie", cookie);
 		}
 		try {
 			client.executeMethod(get);
-			// ¶ÁÈ¡URLµÄÏìÓ¦
-			BufferedReader in = new BufferedReader(new InputStreamReader(
-					get.getResponseBodyAsStream()));
-			StringBuffer sb = new StringBuffer("");
-			String line = "";
-			while ((line = in.readLine()) != null) {
-				sb.append(line + "\n");
+			// è¯»å–URLçš„å“åº”
+			InputStream input = get.getResponseBodyAsStream();
+			StringBuffer sb = new StringBuffer();
+			OutputStream output = new FileOutputStream(file_name);
+			byte[] buffer = new byte[1024 * 8];
+			int count = 0;
+			while ((count = input.read(buffer)) > 0) {
+				output.write(buffer, 0, count);
 			}
-			in.close();
-			String result = sb.toString();
+			output.close();
 			post.releaseConnection();
 			get.releaseConnection();
-			// System.out.println("»ñÈ¡¿Î±í³É¹¦");
-			return result;
+			return true;
 		} catch (Exception e) {
-			return null;
+			return false;
 		}
 	}
 
 	public static void main(String args[]) throws Exception {
 		// System.out.println("A");
-		// // Ìá½»Ê±Çë×¢Òâ±£»¤¸öÈËĞÅÏ¢
+		// // æäº¤æ—¶è¯·æ³¨æ„ä¿æŠ¤ä¸ªäººä¿¡æ¯
 		// System.out.println("" + getRawClassTable("", ""));
 		// System.out.println("B");
 	}

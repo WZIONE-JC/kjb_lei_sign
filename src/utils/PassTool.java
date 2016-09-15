@@ -2,17 +2,17 @@ package utils;
 
 import java.security.MessageDigest;
 
-/** ÃÜÂë¼òµ¥µ¥Ïò¼ÓÃÜÀà */
+/** å¯†ç ç®€å•å•å‘åŠ å¯†ç±» */
 public class PassTool {
 
 	/**
-	 * »ñÈ¡ÎÄ±¾Êı¾İµÄMD5±àÂë
+	 * è·å–æ–‡æœ¬æ•°æ®çš„MD5ç¼–ç 
 	 * 
 	 * @param text
-	 *            Òª±àÂëµÄÎÄ±¾Êı¾İ
-	 * @return Êı¾İµÄ32Î»MD5×Ö·û´®Öµ
+	 *            è¦ç¼–ç çš„æ–‡æœ¬æ•°æ®
+	 * @return æ•°æ®çš„32ä½MD5å­—ç¬¦ä¸²å€¼
 	 */
-	public static String getMD5(String text) {// ·µ»Ø32Î»MD5Êı×é
+	public static String getMD5(String text) {// è¿”å›32ä½MD5æ•°ç»„
 		String result = text;
 		MessageDigest message = null;
 		byte[] bytes = null;
@@ -26,12 +26,12 @@ public class PassTool {
 	}
 
 	/**
-	 * ½«byteÊı×é×ª»»ÎªHex×Ö·û´®£¬ÕâÆäÊµÊÇHttpClientÀïÃæµÄcodec.jarÖĞHexÀàÖĞµÄencodeHex·½·¨
-	 * £¨ÕâÀïÃ»ÓĞ±ØÒªµ¼ÈëÕû¸ö°ü£¬ËùÒÔÖ»ÄÃ³öÀ´Õâ¸ö·½·¨£©
+	 * å°†byteæ•°ç»„è½¬æ¢ä¸ºHexå­—ç¬¦ä¸²ï¼Œè¿™å…¶å®æ˜¯HttpClienté‡Œé¢çš„codec.jarä¸­Hexç±»ä¸­çš„encodeHexæ–¹æ³•
+	 * ï¼ˆè¿™é‡Œæ²¡æœ‰å¿…è¦å¯¼å…¥æ•´ä¸ªåŒ…ï¼Œæ‰€ä»¥åªæ‹¿å‡ºæ¥è¿™ä¸ªæ–¹æ³•ï¼‰
 	 * 
 	 * @param md
-	 *            Òª×ª»»µÄbyteÊı×é
-	 * @return ×ª»»ºóµÄ×Ö·û´®
+	 *            è¦è½¬æ¢çš„byteæ•°ç»„
+	 * @return è½¬æ¢åçš„å­—ç¬¦ä¸²
 	 */
 	private static String toHexString(byte[] md) {
 		char hexDigits[] = { '0', '1', '2', '3', '4', '5', '6', '7', '8', '9',

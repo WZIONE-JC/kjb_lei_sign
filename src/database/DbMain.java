@@ -3,32 +3,32 @@ package database;
 import java.sql.Connection;
 import java.sql.DriverManager;
 
-/** Êı¾İ¿âÁ¬½ÓÀà£¬µ¥ÀıÀàÈ·±£Î¨Ò»Á¬½Ó */
+/** æ•°æ®åº“è¿æ¥ç±»ï¼Œå•ä¾‹ç±»ç¡®ä¿å”¯ä¸€è¿æ¥ */
 public class DbMain {
-	private final String driver = "com.mysql.jdbc.Driver"; // Çı¶¯
-	private final String url = "jdbc:mysql://localhost:3306/kjb_sign";
+	private final String driver = "com.mysql.jdbc.Driver"; // é©±åŠ¨//æ³¨ï¼š&amp;=&
+	private final String url = "jdbc:mysql://localhost:3306/kjb_sign?autoReconnect=true&useUnicode=true&characterEncoding=gbk";// è¿™è¡Œä»£ç æˆ‘æ‰¾äº†5ä¸ªå¤šå°æ—¶â€¦â€¦â€¦â€¦
 	private final String name = "root";
 	private final String password = "root";// 123456
 	private Connection con = null;
 	private static DbMain db = null;
 
 	private DbMain() {
-		try {// ½¨Á¢Á¬½ÓÊı¾İ¿âµÄÁ¬½Ó
-			Class.forName(driver); // ¼ÓÔØÇı¶¯³ÌĞò
-			con = DriverManager.getConnection(url, name, password); // Á¬½ÓÊı¾İ¿â
+		try {// å»ºç«‹è¿æ¥æ•°æ®åº“çš„è¿æ¥
+			Class.forName(driver); // åŠ è½½é©±åŠ¨ç¨‹åº
+			con = DriverManager.getConnection(url, name, password); // è¿æ¥æ•°æ®åº“
 		} catch (Exception e) {
-			System.out.println("--Êı¾İ¿âÁ¬½Ó´íÎó--");
+			System.out.println("--æ•°æ®åº“è¿æ¥é”™è¯¯--");
 		}
 	}
 
-	/** »ñÈ¡´ËÀàÊµÀı */
+	/** è·å–æ­¤ç±»å®ä¾‹ */
 	public static DbMain getInatance() {
 		if (db == null)
 			db = new DbMain();
 		return db;
 	}
 
-	/** »ñÈ¡Êı¾İ¿âÁ¬½Ó */
+	/** è·å–æ•°æ®åº“è¿æ¥ */
 	public Connection getConnect() {
 		return con;
 	}

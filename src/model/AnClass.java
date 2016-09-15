@@ -1,16 +1,16 @@
 package model;
 
-/** Ò»½Ú¿ÎµÄĞÅÏ¢ */
+/** ä¸€èŠ‚è¯¾çš„ä¿¡æ¯ */
 public class AnClass implements Comparable<AnClass> {
-	private int week = 0;// ÖÜ´Î
-	private int index = 0;// ½Ú´Î
-	private String name = "";// ¿ÎÃû
-	private String place = "";// µØµã
-	private String teacher = "";// ½ÌÊ¦
+	private int week = 0;// å‘¨æ¬¡
+	private int index = 0;// èŠ‚æ¬¡
+	private String name = "";// è¯¾å
+	private String place = "";// åœ°ç‚¹
+	private String teacher = "";// æ•™å¸ˆ
 	private String id = "";// ID
 
 	// id=kch_kxh
-	// Òşº¬time=(week - 1) * 5 + index
+	// éšå«time=(week - 1) * 5 + index
 
 	public AnClass(String id, String name, String place, String time) {
 		this.setId(id);
@@ -82,13 +82,13 @@ public class AnClass implements Comparable<AnClass> {
 		return (week - 1) * 5 + index;
 	}
 
-	public void setTime(String time) {// ¸øÔ­Éú¿Î±íÊ¹ÓÃ
+	public void setTime(String time) {// ç»™åŸç”Ÿè¯¾è¡¨ä½¿ç”¨
 		String[] times = time.split("-");
 		this.week = Integer.parseInt(times[0]);
 		this.index = Integer.parseInt(times[1]);
 	}
 
-	public void setTime(int time) {// ¸øÊı¾İ¿âÊı¾İÊ¹ÓÃ
+	public void setTime(int time) {// ç»™æ•°æ®åº“æ•°æ®ä½¿ç”¨
 		this.week = time / 5 + 1;
 		this.index = time % 5;
 	}
@@ -110,7 +110,7 @@ public class AnClass implements Comparable<AnClass> {
 
 	@Override
 	public String toString() {
-		String text = "ĞÇÆÚ" + week + "-µÚ" + index + "½Ú\n" + id + "\n" + name
+		String text = "æ˜ŸæœŸ" + week + "-ç¬¬" + index + "èŠ‚\n" + id + "\n" + name
 				+ "\n" + place + "\n";
 		return text;
 	}

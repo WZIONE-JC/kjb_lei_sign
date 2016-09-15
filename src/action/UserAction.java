@@ -11,8 +11,8 @@ import javax.servlet.http.HttpServletResponse;
 import database.DbUser;
 
 /**
- * µÇÂ¼Óë×¢²á¼àÌıÀà<br/>
- * Login½öÓÃÓÚÑéÖ¤ÓëÌø×ª£¬²»ÒıÈëSession/Token»úÖÆ
+ * ç™»å½•ä¸æ³¨å†Œç›‘å¬ç±»<br/>
+ * Loginä»…ç”¨äºéªŒè¯ä¸è·³è½¬ï¼Œä¸å¼•å…¥Session/Tokenæœºåˆ¶
  */
 @WebServlet(urlPatterns = { "/UserAction" })
 public class UserAction extends HttpServlet {
@@ -27,14 +27,21 @@ public class UserAction extends HttpServlet {
 	// http://localhost:8080/kjb_sign_lei/UserAction
 	protected void doGet(HttpServletRequest request,
 			HttpServletResponse response) throws ServletException, IOException {
-		response.getWriter().write("USER_ACTION");
+		request.setCharacterEncoding("GBK");
+		response.setCharacterEncoding("GBK");
+		response.setContentType("text/html;charset=gb2312");
+		response.getWriter().write("UserAction");
 	}
 
 	protected void doPost(HttpServletRequest request,
 			HttpServletResponse response) throws ServletException, IOException {
 		String type = request.getParameter("REQUEST_TYPE");
+		request.setCharacterEncoding("GBK");
+		response.setCharacterEncoding("GBK");
+		response.setContentType("text/html;charset=gb2312");
 		response.addHeader("Content-Type",
-				"application/x-www-form-urlencoded; charset=utf-8");//Ö¸¶¨±àÂë
+				"application/x-www-form-urlencoded; charset=GBK");// æŒ‡å®šç¼–ç 
+
 		String state = "-2";
 		if ("LOGIN".equals(type)) {
 			state = login(request);
@@ -45,7 +52,7 @@ public class UserAction extends HttpServlet {
 	}
 
 	/**
-	 * ½ÌÊ¦×¢²á
+	 * æ•™å¸ˆæ³¨å†Œ
 	 */
 	private String register(HttpServletRequest request) {
 		System.out.println("user-register");
@@ -54,29 +61,29 @@ public class UserAction extends HttpServlet {
 		String real = request.getParameter("real");
 		try {
 			int year = Integer.parseInt(name.substring(0, 4));
-			if (year < 1000 || year > 2016) {// È¡ÇÉµÄºËÑéËã·¨
-				if (year < 9000)// ¿ª·Å9¿ªÍ·Êı¾İ£¬±ãÓÚ²âÊÔ
+			if (year < 1000 || year > 2016) {// å–å·§çš„æ ¸éªŒç®—æ³•
+				if (year < 9000)// å¼€æ”¾9å¼€å¤´æ•°æ®ï¼Œä¾¿äºæµ‹è¯•
 					return "-3";
 			}
 		} catch (Exception e) {
 			return "-3";
 		}
-		// ÅĞ¶ÏÊÇ·ñÒÑ¾­×¢²á£¬²¢½øĞĞ×¢²á
+		// åˆ¤æ–­æ˜¯å¦å·²ç»æ³¨å†Œï¼Œå¹¶è¿›è¡Œæ³¨å†Œ
 		return dbUser.teaRegister(name, pass, real);
 	}
 
 	/**
-	 * ½ÌÊ¦ÓëÑ§ÉúµÇÂ¼
+	 * æ•™å¸ˆä¸å­¦ç”Ÿç™»å½•
 	 */
 	private String login(HttpServletRequest request) {
 		System.out.println("user-login");
 		String name = request.getParameter("name");
 		String pass = request.getParameter("pass");
 		String type = request.getParameter("type");
-		String auto = request.getParameter("auto");// auto²»ĞèÒª¿Î±í
-		if ("1".equals(type)) {// ½ÌÊ¦
+		String auto = request.getParameter("auto");// autoä¸éœ€è¦è¯¾è¡¨
+		if ("1".equals(type)) {// æ•™å¸ˆ
 			return dbUser.teaLogin(name, pass, "0".equals(auto));
-		} else if ("0".equals(type)) {// Ñ§Éú
+		} else if ("0".equals(type)) {// å­¦ç”Ÿ
 			return dbUser.stuLogin(name, pass, "0".equals(auto));
 		}
 		return "-1";

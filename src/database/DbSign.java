@@ -4,7 +4,7 @@ import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.Statement;
 
-/** Ç©µ½Óë²é¿´£¬Êı¾İ¿â´¦Àí */
+/** ç­¾åˆ°ä¸æŸ¥çœ‹ï¼Œæ•°æ®åº“å¤„ç† */
 public class DbSign {
 	private Connection con = null;
 
@@ -13,11 +13,11 @@ public class DbSign {
 	}
 
 	/**
-	 * Ñ§ÉúÇ©µ½
+	 * å­¦ç”Ÿç­¾åˆ°
 	 */
 	public String stuSign(String stu_id, String stu, String tea, String tea2,
 			String time_str) {
-		int time = 0;// Ê±¼ä×ª»»
+		int time = 0;// æ—¶é—´è½¬æ¢
 		try {
 			time = Integer.parseInt(time_str);
 		} catch (Exception e) {
@@ -26,9 +26,9 @@ public class DbSign {
 		Statement stmt = null;
 		ResultSet res = null;
 		String sql = "";
-		// ¸ù¾İtimeÅĞ¶ÏÇ©µ½Ê±¼äÊÇ·ñºÏÊÊ£¨´Ë´¦ÔÚAPP¶ËÏŞÖÆ£©
-		// Ê¹ÓÃ¾ØĞÎÅĞ¶Ï´¦ÀíÎ»ÖÃĞÅÏ¢£¬×÷²î£¬ÊÖ¶¯µ÷ÑĞ¸÷¸öÇøÎ»xy£¨´Ë´¦ÔÚAPP¶Ë´¦Àí£¬ËäÈ»²»°²È«£¬µ«·şÎñÆ÷Ñ¹Á¦Ğ¡£©
-		try {// ÊÇ·ñÒÑ¾­Ç©µ½
+		// æ ¹æ®timeåˆ¤æ–­ç­¾åˆ°æ—¶é—´æ˜¯å¦åˆé€‚ï¼ˆæ­¤å¤„åœ¨APPç«¯é™åˆ¶ï¼‰
+		// ä½¿ç”¨çŸ©å½¢åˆ¤æ–­å¤„ç†ä½ç½®ä¿¡æ¯ï¼Œä½œå·®ï¼Œæ‰‹åŠ¨è°ƒç ”å„ä¸ªåŒºä½xyï¼ˆæ­¤å¤„åœ¨APPç«¯å¤„ç†ï¼Œè™½ç„¶ä¸å®‰å…¨ï¼Œä½†æœåŠ¡å™¨å‹åŠ›å°ï¼‰
+		try {// æ˜¯å¦å·²ç»ç­¾åˆ°
 			stmt = con.createStatement();
 			sql = "select * from state_s where stu_id='" + stu_id
 					+ "' and time=" + time + "";
@@ -38,34 +38,34 @@ public class DbSign {
 				res.close();
 				return "2";
 			}
-		} catch (Exception ex) {// ¶¼±¨´íÁË£¬¾Í²»±ØcloseÁË
+		} catch (Exception ex) {// éƒ½æŠ¥é”™äº†ï¼Œå°±ä¸å¿…closeäº†
 			return "-2";
 		}
-		try {// Ç©µ½
+		try {// ç­¾åˆ°
 			sql = "insert into state_s values('" + stu_id + "','" + stu + "','"
 					+ tea + "'," + time + ")";
 			int num = stmt.executeUpdate(sql);
-			if (tea2 != null && !tea2.equals("")) {// Á½ÃÅ¿Î³Ì
+			if (tea2 != null && !tea2.equals("")) {// ä¸¤é—¨è¯¾ç¨‹
 				sql = "insert into state_s values('" + stu_id + "','" + stu
 						+ "','" + tea + "'," + time + ")";
 				num += stmt.executeUpdate(sql);
 			}
 			stmt.close();
 			res.close();
-			if (num != 0) // ĞŞ¸Ä³É¹¦
+			if (num != 0) // ä¿®æ”¹æˆåŠŸ
 				return "1";
 			return "-2";
 		} catch (Exception e) {
-			System.out.println("Ç©µ½Òì³£");
+			System.out.println("ç­¾åˆ°å¼‚å¸¸");
 			return "-2";
 		}
 	}
 
 	/**
-	 * ½ÌÊ¦²é¿´Ç©µ½
+	 * æ•™å¸ˆæŸ¥çœ‹ç­¾åˆ°
 	 */
 	public String teaSeeSign(String tea, String time_str) {
-		int time = 0;// Ê±¼ä×ª»»
+		int time = 0;// æ—¶é—´è½¬æ¢
 		try {
 			time = Integer.parseInt(time_str);
 		} catch (Exception e) {
@@ -76,13 +76,13 @@ public class DbSign {
 		String sql = "";
 		int sign_cur = 0, sign_all = 0;
 		String cls_name = "";
-		try { // ºóÆÚ¿É¿¼ÂÇ·µ»ØÇ©µ½µÄÑ§ÉúµÄĞÕÃû////
+		try { // åæœŸå¯è€ƒè™‘è¿”å›ç­¾åˆ°çš„å­¦ç”Ÿçš„å§“å////
 			stmt = con.createStatement();
 			sql = "select * from state_s where teacher='" + tea + "' and time="
 					+ time + "";
 			res = stmt.executeQuery(sql);
 			while (res.next()) {
-				// // /////////////ĞÕÃû»ñÈ¡ÒÑ×¼±¸ºÃ£¬·â×°jsonÊı×é·µ»Ø¼´¿É
+				// // /////////////å§“åè·å–å·²å‡†å¤‡å¥½ï¼Œå°è£…jsonæ•°ç»„è¿”å›å³å¯
 				// String sign_name = res.getString("student");
 				sign_cur++;
 			}
@@ -98,12 +98,12 @@ public class DbSign {
 			}
 			return "{'name':'" + cls_name + "','all':" + sign_all + ",'curr':"
 					+ sign_cur + "}";
-		} catch (Exception ex) {// ¶¼±¨´íÁË£¬¾Í²»±ØcloseÁË
+		} catch (Exception ex) {// éƒ½æŠ¥é”™äº†ï¼Œå°±ä¸å¿…closeäº†
 			return "-2";
 		}
 	}
 
-	/** »ñÈ¡Î»ÖÃĞÅÏ¢£¨str-succ,-1Ê§°Ü£¬·şÎñÆ÷´íÎó£© */
+	/** è·å–ä½ç½®ä¿¡æ¯ï¼ˆstr-succ,-1å¤±è´¥ï¼ŒæœåŠ¡å™¨é”™è¯¯ï¼‰ */
 	public String getPositionInfo() {
 		Statement stmt = null;
 		ResultSet res = null;
@@ -126,7 +126,7 @@ public class DbSign {
 			stmt.close();
 			res.close();
 		} catch (Exception ex) {
-			System.out.println("µÇÂ¼Òì³£");
+			System.out.println("ç™»å½•å¼‚å¸¸");
 			result = "-2";
 		}
 		return result;

@@ -1,6 +1,7 @@
 package action;
 
 import java.io.IOException;
+import java.util.ArrayList;
 
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
@@ -8,9 +9,11 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import model.AnClass;
+import utils.ClassTool;
 import database.DbSign;
 
-/** 签到与查看监听类 */
+/** 绛惧埌涓庢煡鐪嬬洃鍚被 */
 @WebServlet("/SignAction")
 public class SignAction extends HttpServlet {
 	private static final long serialVersionUID = 1L;
@@ -23,14 +26,20 @@ public class SignAction extends HttpServlet {
 
 	protected void doGet(HttpServletRequest request,
 			HttpServletResponse response) throws ServletException, IOException {
-		response.getWriter().write("SIGN_ACTION");
+		request.setCharacterEncoding("GBK");
+		response.setCharacterEncoding("GBK");
+		response.setContentType("text/html;charset=gb2312");
+		response.getWriter().write("SignAction");
 	}
 
 	protected void doPost(HttpServletRequest request,
 			HttpServletResponse response) throws ServletException, IOException {
 		String type = request.getParameter("REQUEST_TYPE");
+		request.setCharacterEncoding("GBK");
+		response.setCharacterEncoding("GBK");
+		response.setContentType("text/html;charset=gb2312");
 		response.addHeader("Content-Type",
-				"application/x-www-form-urlencoded; charset=utf-8");// 指定编码
+				"application/x-www-form-urlencoded; charset=GBK");// 鎸囧畾缂栫爜
 		String state = "-2";
 		if ("SIGN".equals(type)) {
 			state = stuSign(request);
@@ -43,7 +52,7 @@ public class SignAction extends HttpServlet {
 	}
 
 	/**
-	 * 学生签到
+	 * 瀛︾敓绛惧埌
 	 */
 	private String stuSign(HttpServletRequest request) {
 		String stuid = request.getParameter("stuid");
@@ -55,7 +64,7 @@ public class SignAction extends HttpServlet {
 	}
 
 	/**
-	 * 教师查看
+	 * 鏁欏笀鏌ョ湅
 	 */
 	private String teaWatch(HttpServletRequest request) {
 		String tea = request.getParameter("tea");
