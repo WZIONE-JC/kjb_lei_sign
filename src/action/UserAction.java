@@ -1,6 +1,7 @@
 package action;
 
 import java.io.IOException;
+import java.net.URLEncoder;
 
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
@@ -27,28 +28,25 @@ public class UserAction extends HttpServlet {
 	// http://localhost:8080/kjb_sign_lei/UserAction
 	protected void doGet(HttpServletRequest request,
 			HttpServletResponse response) throws ServletException, IOException {
-		request.setCharacterEncoding("GBK");
-		response.setCharacterEncoding("GBK");
-		response.setContentType("text/html;charset=gb2312");
+		request.setCharacterEncoding("UTF-8");
+		response.setCharacterEncoding("UTF-8");
+		response.setContentType("text/html;charset=UTF-8");
 		response.getWriter().write("UserAction");
 	}
 
 	protected void doPost(HttpServletRequest request,
 			HttpServletResponse response) throws ServletException, IOException {
 		String type = request.getParameter("REQUEST_TYPE");
-		request.setCharacterEncoding("GBK");
-		response.setCharacterEncoding("GBK");
-		response.setContentType("text/html;charset=gb2312");
-		response.addHeader("Content-Type",
-				"application/x-www-form-urlencoded; charset=GBK");// 指定编码
-
+		request.setCharacterEncoding("UTF-8");
+		response.setCharacterEncoding("UTF-8");
+		response.setContentType("text/html;charset=UTF-8");
 		String state = "-2";
 		if ("LOGIN".equals(type)) {
 			state = login(request);
 		} else if ("REGISTER".equals(type)) {
 			state = register(request);
 		}
-		response.getWriter().write(state);
+		response.getWriter().write(URLEncoder.encode(state, "UTF-8"));
 	}
 
 	/**

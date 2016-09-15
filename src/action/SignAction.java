@@ -26,20 +26,18 @@ public class SignAction extends HttpServlet {
 
 	protected void doGet(HttpServletRequest request,
 			HttpServletResponse response) throws ServletException, IOException {
-		request.setCharacterEncoding("GBK");
-		response.setCharacterEncoding("GBK");
-		response.setContentType("text/html;charset=gb2312");
+		request.setCharacterEncoding("UTF-8");
+		response.setCharacterEncoding("UTF-8");
+		response.setContentType("text/html;charset=UTF-8");
 		response.getWriter().write("SignAction");
 	}
 
 	protected void doPost(HttpServletRequest request,
 			HttpServletResponse response) throws ServletException, IOException {
 		String type = request.getParameter("REQUEST_TYPE");
-		request.setCharacterEncoding("GBK");
-		response.setCharacterEncoding("GBK");
-		response.setContentType("text/html;charset=gb2312");
-		response.addHeader("Content-Type",
-				"application/x-www-form-urlencoded; charset=GBK");// 指定编码
+		request.setCharacterEncoding("UTF-8");
+		response.setCharacterEncoding("UTF-8");
+		response.setContentType("text/html;charset=UTF-8");
 		String state = "-2";
 		if ("SIGN".equals(type)) {
 			state = stuSign(request);
