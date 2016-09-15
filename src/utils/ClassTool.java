@@ -162,6 +162,9 @@ public class ClassTool {
 				output.write(buffer, 0, count);
 			}
 			output.close();
+			//本来我直接BufferReader读取，本地Windows正常但Linux中文乱码。
+			//测试了各种转码方法均失败，最终只能通过保存原生byte[]数据，通过文件中转解决编码问题。
+			//目前仅发现与request/response的编码有关系。期待更好的解决方案。
 			post.releaseConnection();
 			get.releaseConnection();
 			return true;

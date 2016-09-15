@@ -86,8 +86,8 @@ public class DbSign {
 				// String sign_name = res.getString("student");
 				sign_cur++;
 			}
-			sql = "select * from info_c where teacher='" + tea + "' and time="
-					+ time + "";
+			sql = "select student from info_c where teacher='" + tea + "' and time="
+					+ time + "";//总人数
 			res = stmt.executeQuery(sql);
 			if (res.next()) {
 				sign_all++;
